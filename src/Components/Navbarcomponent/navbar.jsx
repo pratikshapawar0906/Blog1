@@ -1,22 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link,  useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
-import Menu from "../MenuComponent/menu"
-import { FaBars } from "react-icons/fa";
-
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState("");
   const [userId, setUserId] = useState(null);
   const [promt,setPromt]=useState("");
-  const [menu ,setMenu] =useState("");
   const path= useLocation().pathname
 
   const navigate = useNavigate();
-  const ShowMenu = () => {
-    setMenu((prev) => !prev);
-  };
+
 
 
   
@@ -94,14 +88,7 @@ function Navbar() {
           <li className="navbar-item">Write</li>
         </Link>
       </ul>
-      {userId && (
-        <div onClick={ShowMenu}>
-          <p className="cursor-pointer relative">
-            <FaBars />
-            {menu && <Menu />}
-          </p>
-        </div>
-      )}
+      
     </div>
 
     <div className="navbar-middle">

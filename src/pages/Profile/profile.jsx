@@ -135,6 +135,10 @@ const Profile = () => {
         <Link to="/" className="pgp-sidebar-btn">
           <FaHome /> Home
         </Link>
+
+        <Link to="/write" className="pgp-sidebar-btn">
+          Write
+        </Link>
       </div>
 
       {/* Main Profile Section */}
