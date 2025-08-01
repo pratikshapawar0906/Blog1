@@ -1,0 +1,40 @@
+.pdetail-container {
+  max-width: 800px;
+}
+
+.blog-title {
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.blog-meta {
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.blog-banner {
+  max-height: 400px;
+  object-fit: cover;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.blog-content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #333;
+}
+
+.blog-actions button {
+  min-width: 120px;
+}
+
+.comments-section textarea {
+  resize: vertical;
+}
+
+.comments-section ul {
+  margin-top: 1rem;
+}
+
