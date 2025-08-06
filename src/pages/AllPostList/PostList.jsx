@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link, useLocation } from "react-router-dom";
+import Loder from "../../Components/LoderComponent.jsx/Loder";
 
 const BlogPage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -7,25 +9,44 @@ const BlogPage = () => {
   const [totalPages, setTotalPages] = useState(1); // total pages from backend
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [cat, setCat] = useState([]);
+  const{search} =useLocation();
+
 
   useEffect(() => {
     fetchBlogs(page);
-  }, [page]);
+  }, [page,search]);
 
-  const fetchBlogs = async (page) => {
+  
+   const fetchBlogs = async (page) => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:7000/api/AllPost?page=${page}&limit=5`);
+      const res = await axios.get(`http://localhost:7000/api/AllPost?page=${page}&limit=100`);
       setBlogs(res.data.blogs);
       setTotalPages(res.data.totalPages);
       setError("");
+  
+      // Collect categories
+      const cata = res.data.blogs.map((item) => item.categories).flat();
+      const sets = new Set();
+      cata.forEach((category) => {
+        if (category) sets.add(category);
+      });
+      setCat(Array.from(sets));
     } catch (error) {
       console.error("Error fetching blogs:", error);
       setError("Failed to load blogs. Please try again later.");
-    }finally {
-    setLoading(false);
-  }
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleCategoryClick = (category) => {
+    console.log("Category clicked:", category);
+    //  filter or route based on category here
+  };
+
+
 
   const handleNext = () => {
     if (page < totalPages) setPage(page + 1);
@@ -40,21 +61,30 @@ const BlogPage = () => {
       <div className="row">
         {/* Main Content */}
         <div className="col-md-8">
-          {blogs.map((blog) => (
-            <div key={blog._id} className="card mb-4 shadow-sm">
-              <div className="card-body">
-                <div className="d-flex justify-content-between mb-2 text-muted">
-                  <span>{blog.authorName}</span> {/* assuming you are saving author name */}
-                  <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
-                </div>
-                <h5 className="card-title">{blog.title}</h5>
-                <p className="card-text">{blog.content.substring(0, 150)}...</p>
-                <div className="d-flex align-items-center">
-                  <a href={`/blog/${blog._id}`} className="btn btn-primary btn-sm">Read More</a>
+          {loading ? (
+            <Loder />
+          ) : blogs.length > 0 ? (
+            blogs.map((blog) => (
+              <div key={blog._id} className="card mb-4 shadow-sm">
+                <div className="card-body">
+                  <div className="d-flex justify-content-between mb-2 text-muted">
+                    <span>{blog.authorName}</span>
+                    <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <h5 className="card-title">{blog.title}</h5>
+                  <p className="card-text">{blog.content.substring(0, 250)}...</p>
+                  <div className="d-flex align-items-center">
+                    <Link to={`/blog/${blog._id}`} className="btn btn-primary btn-sm">
+                      Read More
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <h3 className="text-center font-bold mt-16">No Posts available</h3>
+          )}
+
 
           {/* Pagination Buttons */}
           <div className="d-flex justify-content-between">
@@ -74,7 +104,19 @@ const BlogPage = () => {
 
         {/* Sidebar */}
         <div className="col-md-4">
-          {/* Add your categories/trending section here, same as before */}
+          {/* my categories/trending section here, same as before */}
+            <div className="p-3 m-5 flex flex-wrap justify-center">
+              {cat.length > 0 && cat.map((category) => (
+                <button
+                  key={category}
+                  className="p-3 m-2 h-[90px] w-[150px] border text-lg font-semibold hover:shadow-blue-200 shadow"
+                  onClick={() => handleCategoryClick(category)}
+                >
+                  {category}
+                </button>
+              ))}
+
+            </div>
         </div>
       </div>
     </div>
