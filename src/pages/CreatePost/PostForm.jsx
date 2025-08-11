@@ -3,16 +3,32 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Loder from "../../Components/LoderComponent.jsx/Loder";
 
 const PostForm = () => {
   const [title, setTitle] = useState('');
   const [bannerUrl, setBannerUrl] = useState('');
   const [content, setContent] = useState('');
+  const[cat,setCat]=useState("");
+  const[cats,setCats]=useState([]);
 
   const { id: BlogId } = useParams();
   const token = localStorage.getItem('Token'); 
   const navigate = useNavigate();
 
+  const addCategory= ()=>{
+     if (!cat.trim()) return toast.warn("Category cannot be empty.");
+    let updatedcats=[...cats, cat.trim()]
+    setCat("")
+    setCats(updatedcats)
+  }
+
+  const deleteCategory=(i)=>{
+    
+    let updatedcats =[...cats]
+    updatedcats.splice(i,1)
+    setCats(updatedcats)
+  }
 
    useEffect(() => {
       if (!token) {
@@ -31,6 +47,8 @@ const PostForm = () => {
             setTitle(blog.title);
             setContent(blog.content);
             setBannerUrl(blog.bannerUrl);
+            setCats(blog.categories || []);
+            
           })
           .catch((err) => {
             toast.error("Failed to load blog details");
@@ -40,6 +58,53 @@ const PostForm = () => {
     }, [BlogId, token, navigate]);
 
   
+   const handleBannerUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append('bannerImage', file);
+   
+  
+    try {
+      const res = await axios.post(
+        "http://localhost:7000/api/blogbanner",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`, // if your backend needs auth
+          },
+        }
+      );
+  
+      setBannerUrl(res.data.secure_url);
+      toast.success("Banner image uploaded successfully!");
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload image.");
+    }
+  };
+
+  // const handleBannerUrlChange = async (e) => {
+  //   const url = e.target.value;
+  //   setBannerUrl(url); // Optional: show it instantly
+  
+  //   if (!url || !url.startsWith("http")) return;
+  
+  //   try {
+  //     const res = await axios.post("http://localhost:7000/api/uploadUrlImage", {
+  //       imageUrl: url,
+  //     });
+  
+  //     setBannerUrl(res.data.secure_url);
+  //     toast.success("Image uploaded from URL successfully!");
+  //   } catch (error) {
+  //     console.error("URL upload error:", error);
+  //     toast.error("Failed to upload image from URL.");
+  //   }
+  // };
+
 
   const savePost = async (status) => {
     try {
@@ -47,7 +112,8 @@ const PostForm = () => {
         title,
         content,
         bannerUrl,
-         status, // should be either 'draft' or 'published'
+         status,
+         categories: cats, // should be either 'draft' or 'published'
         };
       
         const url = BlogId
@@ -64,11 +130,18 @@ const PostForm = () => {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      
     });
 
       console.log(res.data);
       toast.success('Blog post saved successfully!');
-      navigate('/profile/${localStorage.getItem("userId")}'); 
+      navigate(`/profile/${localStorage.getItem("userId")}`); 
+      if (!token) {
+        toast.error("Session expired. Please login again.");
+        navigate("/login");
+        return;
+      }
+
     } catch (err) {
       console.error('Error:', err.response?.data || err.message);
       toast.error(err.response?.data?.message || 'Something went wrong!');
@@ -117,17 +190,50 @@ const PostForm = () => {
           <span className="text-muted">Upload or paste banner URL</span>
         )}
       </div>
-      
       <input
+        type="file"
+        className="form-control mt-2"
+        accept="image/*"
+        onChange={handleBannerUpload}
+      />
+      {/* <input
         type="text"
         className="form-control mt-2"
         placeholder="Enter banner image URL"
         value={bannerUrl}
-        onChange={(e) => setBannerUrl(e.target.value)}
-      />
+         onChange={handleBannerUrlChange}
+      /> */}
+      
       
       
       </div>
+
+      <div className="mb-3">
+        <label className="form-label">Categories</label>
+        <div className="d-flex">
+          <input
+            type="text"
+            className="form-control me-2"
+            placeholder="Enter category"
+            value={cat}
+            onChange={(e) => setCat(e.target.value)}
+          />
+          <button className="btn btn-primary" onClick={addCategory}>Add</button>
+        </div>
+        <div className="mt-2">
+          {cats.map((c, i) => (
+            <span
+              key={i}
+              className="badge bg-secondary me-2"
+              style={{ cursor: "pointer" }}
+              onClick={() => deleteCategory(i)}
+            >
+              {c} &times;
+            </span>
+          ))}
+        </div>
+      </div>
+
 
       {/* Blog Title */}
       <div className="mb-3">
