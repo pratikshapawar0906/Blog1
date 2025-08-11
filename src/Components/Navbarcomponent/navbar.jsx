@@ -84,6 +84,11 @@ function Navbar() {
         <li className="navbar-item">
           <Link className="text-decoration-none" to="/">Home</Link>
         </li>
+       { isLoggedIn && (
+          <li className="navbar-item">
+            <Link className="text-decoration-none" to={`/myblog/:userId`}>My Blog</Link>
+          </li>
+        )}
         <Link className="text-decoration-none" to="/write">
           <li className="navbar-item">Write</li>
         </Link>

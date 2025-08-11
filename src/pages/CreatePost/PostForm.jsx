@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Loder from "../../Components/LoderComponent.jsx/Loder";
+import { getValidToken } from "../../util/auth";
 
 const PostForm = () => {
   const [title, setTitle] = useState('');
@@ -11,10 +12,14 @@ const PostForm = () => {
   const [content, setContent] = useState('');
   const[cat,setCat]=useState("");
   const[cats,setCats]=useState([]);
+  const [loading, setLoading] = useState(false);
+  
+
 
   const { id: BlogId } = useParams();
-  const token = localStorage.getItem('Token'); 
+  // const token = localStorage.getItem('Token'); 
   const navigate = useNavigate();
+  const token = getValidToken(navigate);
 
   const addCategory= ()=>{
      if (!cat.trim()) return toast.warn("Category cannot be empty.");
@@ -30,37 +35,43 @@ const PostForm = () => {
     setCats(updatedcats)
   }
 
-   useEffect(() => {
-      if (!token) {
-        toast.error("Session expired. Please login again.");
-        navigate("/login");
-        return;
-      }
-    
-      if (BlogId) {
-        axios
-          .get(`http://localhost:7000/api/blogs/${BlogId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .then((res) => {
-            const blog = res.data;
-            setTitle(blog.title);
-            setContent(blog.content);
-            setBannerUrl(blog.bannerUrl);
-            setCats(blog.categories || []);
-            
-          })
-          .catch((err) => {
-            toast.error("Failed to load blog details");
-            console.error(err);
-          });
-      }
-    }, [BlogId, token, navigate]);
+   
+
+  useEffect(() => {
+    if (!token) {
+      toast.error("Session expired. Please login again.");
+      navigate("/login");
+      return;
+    }
+  
+    if (BlogId) {
+      setLoading(true);
+      axios
+        .get(`http://localhost:7000/api/blogs/${BlogId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          const blog = res.data;
+          setTitle(blog.title || "");
+          setContent(blog.content || "");
+          setBannerUrl(blog.bannerUrl || "");
+          setCats(blog.categories || []);
+        })
+        .catch(() => toast.error("Failed to load blog details"))
+        .finally(() => setLoading(false));
+    }
+  }, [BlogId, token, navigate]);
+
 
   
    const handleBannerUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    
+    if (!file.type.startsWith("image/")) {
+    toast.error("Please upload a valid image file.");
+    return;
+  }
   
     const formData = new FormData();
     formData.append('bannerImage', file);
@@ -107,6 +118,14 @@ const PostForm = () => {
 
 
   const savePost = async (status) => {
+    const freshToken = getValidToken(navigate);
+    if (!freshToken) return;
+    if (!token) {
+        toast.error("Session expired. Please login again.");
+        navigate("/login");
+        return;
+      }
+
     try {
       const post = {
         title,
@@ -127,7 +146,7 @@ const PostForm = () => {
       url,
       data: post,
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${freshToken}`,
         'Content-Type': 'application/json',
       },
       
@@ -136,12 +155,7 @@ const PostForm = () => {
       console.log(res.data);
       toast.success('Blog post saved successfully!');
       navigate(`/profile/${localStorage.getItem("userId")}`); 
-      if (!token) {
-        toast.error("Session expired. Please login again.");
-        navigate("/login");
-        return;
-      }
-
+      
     } catch (err) {
       console.error('Error:', err.response?.data || err.message);
       toast.error(err.response?.data?.message || 'Something went wrong!');
@@ -150,8 +164,11 @@ const PostForm = () => {
     
   };
   
+  if (loading) return <Loder />;
   return (
+    
     <div className="container my-4">
+    
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h5 className="mb-0">{BlogId ? "Edit Blog" : "New Blog"}</h5>
         <div>

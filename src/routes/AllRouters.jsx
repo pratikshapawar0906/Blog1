@@ -24,8 +24,8 @@ const AllRouters = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/write" element={<CreatePost/>} />
-        <Route path="/Post/post/id" element={<PostDetail />} />
-        <Route path="/myblog/:id" element={<MyBlog />} />
+        <Route path="/blog/:id" element={<PostDetail />} />
+        <Route path="/myblog/:userId" element={<MyBlog />} />
         {/* <Route path="//forgot-password" element={<ForgotPassword />} /> */}
         <Route path="/profile/:userId" element={<Profile/>} />
         {/* <Route path="/preview/:draftId" element={<Preview/>} /> */}

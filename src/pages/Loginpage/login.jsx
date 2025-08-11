@@ -112,9 +112,9 @@ const Login = () => {
           <ToastContainer />
           
         </div>
-        <button type="submit" className="submit" disabled={loading}>
+        {/* <button type="submit" className="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
-        </button>
+        </button> */}
     </>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Loder from "../../Components/LoderComponent.jsx/Loder";
 
 const BlogPage = () => {
@@ -11,6 +11,7 @@ const BlogPage = () => {
   const [loading, setLoading] = useState(false);
   const [cat, setCat] = useState([]);
   const{search} =useLocation();
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -21,7 +22,7 @@ const BlogPage = () => {
    const fetchBlogs = async (page) => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:7000/api/AllPost?page=${page}&limit=100`);
+      const res = await axios.get(`http://localhost:7000/api/AllPost?page=${page}&limit=100${search || ""}`);
       setBlogs(res.data.blogs);
       setTotalPages(res.data.totalPages);
       setError("");
@@ -44,6 +45,7 @@ const BlogPage = () => {
   const handleCategoryClick = (category) => {
     console.log("Category clicked:", category);
     //  filter or route based on category here
+      navigate(`?category=${encodeURIComponent(category)}`);
   };
 
 
@@ -64,26 +66,49 @@ const BlogPage = () => {
           {loading ? (
             <Loder />
           ) : blogs.length > 0 ? (
-            blogs.map((blog) => (
-              <div key={blog._id} className="card mb-4 shadow-sm">
-                <div className="card-body">
-                  <div className="d-flex justify-content-between mb-2 text-muted">
-                    <span>{blog.authorName}</span>
-                    <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
-                  </div>
-                  <h5 className="card-title">{blog.title}</h5>
-                  <p className="card-text">{blog.content.substring(0, 250)}...</p>
-                  <div className="d-flex align-items-center">
-                    <Link to={`/blog/${blog._id}`} className="btn btn-primary btn-sm">
-                      Read More
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <h3 className="text-center font-bold mt-16">No Posts available</h3>
-          )}
+  blogs.map((blog) => (
+    <div key={blog._id} className="card mb-4 shadow-sm">
+      <div className="card-body d-flex">
+        {/* Blog Image */}
+        {blog.bannerUrl && (
+          <img
+            src={blog.bannerUrl}
+            alt={blog.title}
+            className="rounded"
+            style={{
+              width: "150px",
+              height: "100px",
+              objectFit: "cover",
+              marginRight: "15px",
+            }}
+          />
+        )}
+
+        {/* Blog Info */}
+        <div className="flex-grow-1">
+          <div className="d-flex justify-content-between mb-2 text-muted">
+            <span>{blog.authorName}</span>
+            <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+          </div>
+          <h5 className="card-title">{blog.title}</h5>
+          <p className="card-text">
+            {blog.content.substring(0, 250)}...
+          </p>
+          <Link
+            to={`/blog/${blog._id}`}
+            state={{ blog }}
+            className="btn btn-primary btn-sm"
+          >
+            Read More
+          </Link>
+        </div>
+      </div>
+    </div>
+  ))
+) : (
+  <h3 className="text-center font-bold mt-16">No Posts available</h3>
+)}
+
 
 
           {/* Pagination Buttons */}
