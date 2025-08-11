@@ -1,4 +1,5 @@
 import Blog from "../model/BlogSchema.js";
+import cloudinary  from "../utils/cloudinary.js";
 
 // POST - create blog
 export const createBlog = async (req, res) => {
@@ -72,5 +73,58 @@ export const AllPost=async (req, res) => {
   } catch (err) {
     console.error("Error fetching blogs:", err);
     res.status(500).json({ message: "Server error fetching blogs" });
+  }
+};
+
+// export const uplodUrl= async (req, res) => {
+//   const { imageUrl } = req.body;
+
+//   if (!imageUrl) {
+//     return res.status(400).json({ message: 'Image URL is required' });
+//   }
+
+//   try {
+//     const uploadedResponse = await cloudinary.uploader.upload(imageUrl, {
+//       folder: 'blog_banners',
+//     });
+
+//     return res.status(200).json({ secure_url: uploadedResponse.secure_url });
+//   } catch (error) {
+//     console.error('Upload error:', error);
+//     return res.status(500).json({ message: 'Failed to upload image from URL' });
+//   }
+// }
+
+// POST - Upload blog banner image (file upload)
+export const blogPhoto = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No image file provided" });
+    }
+
+    // Convert buffer to stream and pipe to Cloudinary
+    const stream = require("stream");
+    const bufferStream = new stream.PassThrough();
+    bufferStream.end(req.file.buffer);
+
+    const result =  cloudinary.uploader.upload_stream(
+      { folder: "blog_banners" },
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary Upload Error:", error);
+          return res.status(500).json({ message: "Image upload failed" });
+        }
+
+        return res.status(200).json({ secure_url: result.secure_url });
+      }
+    );
+
+    
+    
+    bufferStream.pipe(result);
+
+  } catch (error) {
+    console.error("Upload Error:", error);
+    res.status(500).json({ message: "Server error during image upload" });
   }
 };
