@@ -1,0 +1,87 @@
+/* Navbar.css */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.navbar-middle{
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 2rem;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.navbar-item {
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  color: #000000;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.navbar-item:hover {
+  color: #000000; /* Replace with your primary color */
+  transform: scale(1.2);
+}
+
+.navbar-right {
+  display: flex;
+  gap: 0.5rem;
+}
+.navbar-user{
+    display: flex;
+}
+
+.navbar-button {
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  font-size: 20px;
+  height: 50px;
+  width: 150px;
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search {
+  padding: 8px 35px 8px 10px; /* Adjust padding to make space for icon */
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+  width: 300px;
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  color: gray;
+  cursor: pointer;
+}
+
+.navbar-button a {
+  text-decoration: none;
+  color: #000000; /* Adjust for your primary color */
+}
+
+.profile-photo {
+  border: 2px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}

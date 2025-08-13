@@ -1,0 +1,228 @@
+/* Root Variables */
+:root {
+  --pgp-primary: #585b5e;
+  --pgp-secondary: #899098;
+  --pgp-bg-light: #f9f9f9;
+  --pgp-text-dark: #333;
+  --pgp-border-radius: 12px;
+  --pgp-sidebar-bg: #bbbcbd;
+  --pgp-sidebar-hover: #889099;
+}
+
+/* General Styles */
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: var(--pgp-bg-light);
+  margin: 0;
+  padding: 0;
+}
+
+/* Profile Wrapper (Main Layout) */
+.pgp-profile-wrapper {
+  display: flex;
+  height: 100vh;
+}
+
+/* Sidebar */
+.pgp-sidebar {
+  width: 220px;
+  background: var(--pgp-sidebar-bg);
+  color: rgb(78, 68, 68);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.pgp-sidebar-btn {
+  background: none;
+  border: none;
+  color: rgb(46, 42, 42);
+  font-size: 18px;
+  padding: 15px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pgp-sidebar-btn:hover {
+  background: var(--pgp-sidebar-hover);
+}
+
+/* Profile Content */
+.pgp-profile-content {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Profile Header */
+.pgp-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: var(--pgp-border-radius);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+.pgp-profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--pgp-primary);
+}
+
+..pgp-profile-details {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.pgp-profile-details h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pgp-profile-details p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.pgp-profile-details input,
+.pgp-profile-details textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+
+.pgp-profile-details input:focus,
+.pgp-profile-details textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+.pgp-submit-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.pgp-submit-btn:hover {
+  background: #0056b3;
+}
+
+.pgp-profile-details .fa-edit {
+  color: #007bff;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.pgp-profile-details .fa-edit:hover {
+  transform: scale(1.1);
+}
+
+/* Social Links */
+.pgp-social-links {
+  margin-top: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: var(--pgp-border-radius);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+.pgp-social-links h3 {
+  margin-bottom: 15px;
+}
+
+.pgp-social-links label {
+  font-weight: 600;
+  margin-top: 10px;
+  display: block;
+}
+
+.pgp-social-links input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.pgp-social-links input:focus {
+  border-color: var(--pgp-primary);
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .pgp-profile-wrapper {
+    flex-direction: column;
+  }
+
+  .pgp-sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .pgp-sidebar-btn {
+    width: auto;
+    padding: 10px;
+  }
+
+  .pgp-profile-header,
+  .pgp-social-links {
+    width: 90%;
+  }
+}
+/* Update Button */
+.pgp-update-btn {
+  background: #5d5b59;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 300px;
+  margin-top: 15px;
+  transition: background 0.3s;
+}
+
+.pgp-update-btn:hover {
+  background: #cbc9c6;
+}

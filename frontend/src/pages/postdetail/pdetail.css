@@ -1,0 +1,75 @@
+.pdetail-container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.blog-title {
+  font-weight: 800;
+  color: #1f2937; /* Darker for better contrast */
+  font-size: 2.2rem;
+  line-height: 1.3;
+}
+
+.blog-meta {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.blog-banner {
+  max-height: 500px;
+  object-fit: cover;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.blog-banner:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.blog-content {
+  font-size: 1.15rem;
+  line-height: 1.9;
+  color: #374151;
+  margin-top: 1.5rem;
+}
+
+.blog-content p {
+  margin-bottom: 1.2rem;
+}
+
+.blog-actions button {
+  min-width: 120px;
+  padding: 0.5rem 1rem;
+}
+
+.comments-section textarea {
+  resize: vertical;
+}
+
+.comments-section ul {
+  margin-top: 1rem;
+}
+
+/* Card styling */
+.card {
+  background: #ffffff;
+  border: none;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* Back button */
+.btn-secondary {
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 0.5rem 1.2rem;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
