@@ -11,6 +11,8 @@ const BlogPage = () => {
   const [loading, setLoading] = useState(false);
   const [cat, setCat] = useState([]);
   const{search} =useLocation();
+  const params = new URLSearchParams(search);
+  const activeCategory = params.get("category"); 
   const navigate = useNavigate();
 
 
@@ -126,18 +128,23 @@ const BlogPage = () => {
         {/* Sidebar */}
         <div className="col-md-4">
           {/* my categories/trending section here, same as before */}
-            <div className="p-3 m-5 flex flex-wrap justify-center">
-              {cat.length > 0 && cat.map((category) => (
-                <button
-                  key={category}
-                  className="p-3 m-2 h-[90px] w-[150px] border text-lg font-semibold hover:shadow-blue-200 shadow"
-                  onClick={() => handleCategoryClick(category)}
-                >
-                  {category}
-                </button>
-              ))}
+           <div className="p-3 m-5 flex flex-wrap justify-center">
+             {cat.length > 0 &&
+               cat.map((category) => (
+                 <button
+                   key={category}
+                   className={`p-3 m-2 h-[90px] w-[150px] border text-lg font-semibold shadow ${
+                     activeCategory === category
+                       ? "bg-blue-500 text-white" // active category style
+                       : "hover:shadow-blue-200"
+                   }`}
+                   onClick={() => handleCategoryClick(category)}
+                 >
+                   {category}
+                 </button>
+               ))}
+           </div>
 
-            </div>
         </div>
       </div>
     </div>

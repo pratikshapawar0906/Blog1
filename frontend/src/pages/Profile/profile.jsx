@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import "./pro.css";
-import { FaEdit, FaHome } from "react-icons/fa";
+import { FaEdit, FaHome, FaPen } from "react-icons/fa";
+import { handleSuccess } from "../../util";
+import Loder from "../../Components/LoderComponent.jsx/Loder";
 
 const Profile = () => {
   const { userId } = useParams();
@@ -41,8 +43,13 @@ const Profile = () => {
   }, [userId]);
 
   if (loading) {
-    return <div>Loading...</div>; // Display loading state
+    return (
+      <div >
+        <Loder />
+      </div>
+    );
   }
+
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -82,44 +89,42 @@ const Profile = () => {
         const formData = new FormData();
         formData.append("profilePhoto", newProfilePicture);
         formData.append("userId", storedUserId);
-
-        const response = await axios.post(
+      
+        const uploadRes = await axios.post(
           `${process.env.REACT_APP_API_URL}/api/user/uploadProfilePhoto`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-
-        if (response.data.photoUrl) {
-          setUser((prevUser) => ({
-            ...prevUser,
-            profilePicture: response.data.photoUrl,
-          }));
+      
+        if (uploadRes.data.photoUrl) {
+          updatedPhotoUrl = uploadRes.data.photoUrl; // <-- update variable
           setNewProfilePicture(null);
         }
       }
+
       
       
 
       //  Update other profile details
-      await axios.put(`${process.env.REACT_APP_API_URL}/api/updateProfile`, {
+      const { data } = await axios.put(`${process.env.REACT_APP_API_URL}/api/updateProfile`, {
         userId: storedUserId,
         name: user.name,
         bio: user.bio,
         socialLinks: user.socialLinks,
         profilePicture: updatedPhotoUrl,
       });
+      
+      if (data.success) {
+        handleSuccess(data.message);
+        localStorage.setItem("ProfilePhoto", updatedPhotoUrl);
+        window.dispatchEvent(new Event("storage"));
+        setEditing(false);
+        setUser((prevUser) => ({
+          ...prevUser,
+          profilePicture: updatedPhotoUrl,
+        }));
+      }
 
-      //  Save updated photo in Local Storage
-      localStorage.setItem("ProfilePhoto", updatedPhotoUrl);
-      window.dispatchEvent(new Event("storage")); 
-      setEditing(false);
-
-      setUser((prevUser) => ({
-        ...prevUser,
-        profilePicture: updatedPhotoUrl,
-      }));
-
-      console.log("Profile updated successfully!");
     } catch (error) {
       console.error("Update failed:", error);
     }
@@ -137,7 +142,7 @@ const Profile = () => {
         </Link>
 
         <Link to="/write" className="pgp-sidebar-btn">
-          Write
+         <FaPen /> Write
         </Link>
       </div>
 

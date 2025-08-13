@@ -31,7 +31,7 @@ router.get("/user/:userId", authMiddleware, getBlogByUserId)
 router.delete("/blogs/:blogId", authMiddleware,deleteBlogbyId)
 // router.post('/uploadUrlImage'uplodUrl)
 
-router.get('/user/:id', getUserProfile);
+router.get('/user/:id',authMiddleware, getUserProfile);
 router.post('/user/uploadProfilePhoto', cloudinaryUpload.single('profilePhoto'), uploadProfilePhoto);
 router.put('/updateProfile', updateProfile);
 router.get('/AllPost',AllPost)
