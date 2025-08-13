@@ -8,9 +8,8 @@ import MyBlog from '../pages/MyBlogs/myBlog'
 import Signup from "../pages/Registerpage/Singup";
 // import ForgotPassword from "../src/component/forgotpasswordComponent/forgotPassword";
 import Profile from "../pages/Profile/profile";
-// import Preview from "../src/component/previewComponent/preview";
 import BlogEditor from "../pages/EditPost/editpost";
-import PhotoContext from "../context/photocontext";
+
 const AllRouters = () => {
   return (
     <>
@@ -31,6 +30,7 @@ const AllRouters = () => {
         {/* <Route path="/preview/:draftId" element={<Preview/>} /> */}
         {/* <Route path="/new" element={<BlogEditor />} /> */}
         <Route path="/edit/:id" element={<BlogEditor />} />
+        
 
         
       </Routes>

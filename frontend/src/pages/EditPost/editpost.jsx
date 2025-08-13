@@ -9,7 +9,7 @@ const EditPost = () => {    // <-- Rename component to PascalCase
   const location = useLocation();
   const blogFromState = location.state?.blog;
 
-  const [blog, setBlog] = useState(blogFromState || null);
+  const [, setBlog] = useState(blogFromState || null);
   const [loading, setLoading] = useState(!blogFromState);
   const [error, setError] = useState("");
   const [form, setForm] = useState({

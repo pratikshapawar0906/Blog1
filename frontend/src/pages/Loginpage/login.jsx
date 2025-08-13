@@ -7,7 +7,7 @@ import { handleError, handleSuccess } from "../../util";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
   const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ const Login = () => {
     event.preventDefault();
     setLoading(true);
     try {
-        const response = await fetch("${process.env.REACT_APP_API_URL}/api/login", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),

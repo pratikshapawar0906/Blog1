@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link,  useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
@@ -15,12 +15,12 @@ function Navbar() {
 
   
 
-  const profilePhotos = [
+  const profilePhotos =  useMemo(() =>[
     "https://randomuser.me/api/portraits/men/32.jpg",
     "https://randomuser.me/api/portraits/women/65.jpg",
     "https://randomuser.me/api/portraits/men/75.jpg",
     "https://randomuser.me/api/portraits/women/22.jpg",
-  ];
+  ], []);
 
   useEffect(() => {
     const token = localStorage.getItem("Token");
@@ -48,7 +48,7 @@ function Navbar() {
       setProfilePhoto("");
       setUserId(null);
     }
-  }, []);
+  }, [profilePhotos]);
   
 
 

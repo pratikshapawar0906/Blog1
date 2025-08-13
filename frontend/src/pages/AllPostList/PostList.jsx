@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Loder from "../../Components/LoderComponent.jsx/Loder";
@@ -7,32 +7,23 @@ const BlogPage = () => {
   const [blogs, setBlogs] = useState([]);
   const [page, setPage] = useState(1); // current page number
   const [totalPages, setTotalPages] = useState(1); // total pages from backend
-  const [error, setError] = useState("");
+  const [, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [cat, setCat] = useState([]);
   const{search} =useLocation();
   const navigate = useNavigate();
 
 
-  useEffect(() => {
-    fetchBlogs(page);
-  }, [page,search]);
-
-  
-   const fetchBlogs = async (page) => {
+  const fetchBlogs = useCallback(async (page) => {
     setLoading(true);
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/AllPost?page=${page}&limit=100${search || ""}`);
       setBlogs(res.data.blogs);
       setTotalPages(res.data.totalPages);
       setError("");
-  
-      // Collect categories
       const cata = res.data.blogs.map((item) => item.categories).flat();
       const sets = new Set();
-      cata.forEach((category) => {
-        if (category) sets.add(category);
-      });
+      cata.forEach((category) => { if (category) sets.add(category); });
       setCat(Array.from(sets));
     } catch (error) {
       console.error("Error fetching blogs:", error);
@@ -40,7 +31,12 @@ const BlogPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]);
+  
+  useEffect(() => {
+    fetchBlogs(page);
+  }, [page, search, fetchBlogs]);
+
 
   const handleCategoryClick = (category) => {
     console.log("Category clicked:", category);
