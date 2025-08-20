@@ -86,7 +86,7 @@ function Navbar() {
         </li>
        { isLoggedIn && (
           <li className="navbar-item">
-            <Link className="text-decoration-none" to={`/myblog/:userId`}>My Blog</Link>
+            <Link className="text-decoration-none" to={`/myblog/${userId}`}>My Blog</Link>
           </li>
         )}
         <Link className="text-decoration-none" to="/write">
@@ -103,12 +103,15 @@ function Navbar() {
             type="text"
             placeholder="Search"
             className="search"
+            value={promt}
             onChange={(e) => setPromt(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && navigate(promt ? `?search=${promt}` : "/")}
           />
+
           <i
             className="fas fa-search search-icon"
             aria-label="Search Icon"
-            onClick={() => navigate(promt ? `?search=${promt}` : "/")}
+            onClick={() => navigate(promt ? `?search=${encodeURIComponent(promt)}` : "/")}
           />
         </div>
       )}
@@ -120,7 +123,7 @@ function Navbar() {
           <Link to={`/profile/${userId}`}>
             <img
               src={profilePhoto}
-              alt="Profile"
+              alt="User profile"
               className="profile-photo"
               width={40}
               height={40}

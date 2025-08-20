@@ -12,14 +12,23 @@ const BlogPage = () => {
   const [cat, setCat] = useState([]);
   const{search} =useLocation();
   const params = new URLSearchParams(search);
-  const activeCategory = params.get("category"); 
+  const activeCategory = params.get("category");
+  const searchQuery = params.get("search");
+
   const navigate = useNavigate();
 
 
   const fetchBlogs = useCallback(async (page) => {
     setLoading(true);
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/AllPost?page=${page}&limit=100${search || ""}`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/AllPost`, {
+        params: {
+          page,
+          limit: 100,
+          category: activeCategory,
+          search: searchQuery
+        }
+      });
       setBlogs(res.data.blogs);
       setTotalPages(res.data.totalPages);
       setError("");

@@ -2,22 +2,13 @@ import express from "express";
 import { getUserProfile, loginUser, registerUser, updateProfile, uploadProfilePhoto } from "../Controller/UserController.js";
 import authMiddleware from "../Middlewarw/authMiddleware.js";
 import { AllPost, blogPhoto, createBlog, deleteBlogbyId, getBlogById, getBlogByUserId, updateBlog } from "../Controller/BlogController.js";
-import multer from 'multer';
-import path from 'path';
+
 
 import cloudinaryUpload from "../Middlewarw/cloudinaryStroage.js"; // path to your file
+import { Comments, data, likes } from "../Controller/LikeCommentController.js";
 
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'uploads/'); // or use memoryStorage for cloud upload
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, `${Date.now()}${path.extname(file.originalname)}`);
-//   },
-// });
 
-// export const upload = multer({ storage });
 
 const router = express.Router();
 
@@ -35,6 +26,10 @@ router.get('/user/:id',authMiddleware, getUserProfile);
 router.post('/user/uploadProfilePhoto', cloudinaryUpload.single('profilePhoto'), uploadProfilePhoto);
 router.put('/updateProfile', updateProfile);
 router.get('/AllPost',AllPost)
+
+router.get('/blogs/:id/data',data);
+router.post('/blogs/:id/comments',Comments)
+router.post('/blogs/:id/like',likes)
 
 
 export default router;

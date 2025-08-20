@@ -35,7 +35,7 @@
 
 .navbar-item:hover {
   color: #000000; /* Replace with your primary color */
-  transform: scale(1.2);
+  transform: scale(1.05);
 }
 
 .navbar-right {

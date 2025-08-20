@@ -55,24 +55,27 @@ export const getBlogById = async (req, res) => {
   }
 };
 
-export const AllPost=async (req, res) => {
+export const AllPost = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 100;
   const category = req.query.category;
+  const search = req.query.search;
 
   try {
-     // Build filter object
     let filter = {};
-    if (category) {
-      // Match category exactly
-      filter.categories = category;
+    if (category) filter.categories = category;
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { content: { $regex: search, $options: "i" } }
+      ];
     }
 
-    const totalBlogs = await Blog.countDocuments();
+    const totalBlogs = await Blog.countDocuments(filter);
     const totalPages = Math.ceil(totalBlogs / limit);
     const skip = (page - 1) * limit;
 
-    const blogs = await Blog.find()
+    const blogs = await Blog.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -83,6 +86,7 @@ export const AllPost=async (req, res) => {
     res.status(500).json({ message: "Server error fetching blogs" });
   }
 };
+
 
 // export const uplodUrl= async (req, res) => {
 //   const { imageUrl } = req.body;
