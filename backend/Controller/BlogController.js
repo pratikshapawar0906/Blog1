@@ -49,9 +49,52 @@ export const getBlogById = async (req, res) => {
     const blog = await Blog.findById(req.params.id).populate("author", "name");
     if (!blog) return res.status(404).json({ message: "Blog not found" });
 
-    res.json(blog);
+    // Increment view count
+    blog.views += 1;
+    await blog.save();
+
+    res.json({ blog });
+   
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch blog" });
+  }
+};
+
+//  Recent Blogs
+export const getRecentBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find({ status: "published" })
+      .sort({ createdAt: -1 })
+      .limit(5);
+    res.json({ blogs });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+//  Trending Blogs (most liked or viewed)
+export const getTrendingBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find({ status: "published" })
+      .sort({ likes: -1, views: -1 })
+      .limit(5);
+    res.json({ blogs });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Increment views
+export const getviewofblogs=async (req, res) => {
+  try {
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { views: 1 } },
+      { new: true }
+    );
+    res.status(200).json(blog);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
