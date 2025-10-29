@@ -12,11 +12,14 @@ const LikeShareComment = ({ blogId }) => {
   useEffect(() => {
     if (!blogId) return;
 
-    const savedComments = JSON.parse(localStorage.getItem(`comments_${blogId}`));
-    const savedLiked = JSON.parse(localStorage.getItem(`likes_${blogId}`));
+    
+  const savedComments = JSON.parse(localStorage.getItem(`comments_${blogId}`));
+  const savedLikeCount = JSON.parse(localStorage.getItem(`likes_${blogId}`));
+  const savedLiked = JSON.parse(localStorage.getItem(`liked_${blogId}`));
 
-    if (savedComments !== null) setComments(savedComments);
-    if (savedLiked !== null) setLikeCount(savedLiked);
+  if (savedComments) setComments(savedComments);
+  if (savedLikeCount !== null) setLikeCount(savedLikeCount);
+  if (savedLiked !== null) setIsLiked(savedLiked);
 
     setIsLoaded(true);
   }, [blogId]);
@@ -27,7 +30,13 @@ const LikeShareComment = ({ blogId }) => {
     localStorage.setItem(`comments_${blogId}`, JSON.stringify(comments));
   }, [blogId, comments, isLoaded]);
 
-  // Save likes
+  // Save likes count
+  useEffect(() => {
+    if (!blogId || !isLoaded) return;
+    localStorage.setItem(`likes_${blogId}`, JSON.stringify(likeCount));
+  }, [blogId, likeCount, isLoaded]);
+  
+  // Save liked state
   useEffect(() => {
     if (!blogId || !isLoaded) return;
     localStorage.setItem(`liked_${blogId}`, JSON.stringify(isLiked));
@@ -117,7 +126,7 @@ const LikeShareComment = ({ blogId }) => {
                 <span>{c.text}</span>
                 <button
                   className="btn btn-sm btn-danger"
-                  onClick={() => handleDeleteComment(index)}
+                  onClick={() => handleDeleteComment(c.id)}
                   aria-label="Delete comment"
                   title="Delete comment"
                 >

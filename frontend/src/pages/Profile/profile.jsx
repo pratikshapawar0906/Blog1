@@ -22,13 +22,19 @@ const Profile = () => {
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
+    const token = localStorage.getItem("Token");
+
     if (!storedUserId) {
       console.error("User ID not found in localStorage");
       return;
     }
 
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/user/${storedUserId}`)
+      .get(`${process.env.REACT_APP_API_URL}/api/user/${storedUserId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => {
         setUser({
           ...response.data,
@@ -50,19 +56,19 @@ const Profile = () => {
     );
   }
 
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
+  
     setNewProfilePicture(file);
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setUser((prevUser) => ({ ...prevUser, profilePicture: reader.result }));
-    };
-    reader.readAsDataURL(file);
+  
+    const previewURL = URL.createObjectURL(file);
+    setUser((prevUser) => ({
+      ...prevUser,
+      profilePicture: previewURL, // Temporary preview URL
+    }));
   };
+
 
   const handleEditClick = () => {
     setEditing(!editing);

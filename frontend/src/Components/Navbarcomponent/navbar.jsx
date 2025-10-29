@@ -79,19 +79,20 @@ function Navbar() {
   return (
   <div className="navbar px-5 sticky-top bg-light">
     <div className="navbar-left">
-      {/* <img src="" alt="MyAppLogo" width={50} height={50} /> */}
+      
       <ul className="navbar-menu">
         <li className="navbar-item">
-          <Link className="text-decoration-none" to="/">Home</Link>
+          <Link className="text-decoration-none text-muted" to="/">Home</Link>
         </li>
        { isLoggedIn && (
           <li className="navbar-item">
-            <Link className="text-decoration-none" to={`/myblog/${userId}`}>My Blog</Link>
+            <Link className="text-decoration-none text-muted" to={`/myblog/${userId}`}>My Blog</Link>
           </li>
         )}
-        <Link className="text-decoration-none" to="/write">
-          <li className="navbar-item">Write</li>
-        </Link>
+        <li className="navbar-item">
+          <Link className="text-decoration-none text-muted" to="/write">Write</Link>
+        </li>
+
       </ul>
       
     </div>
@@ -105,7 +106,10 @@ function Navbar() {
             className="search"
             value={promt}
             onChange={(e) => setPromt(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && navigate(promt ? `?search=${promt}` : "/")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") navigate(promt ? `?search=${encodeURIComponent(promt)}` : "/");
+            }}
+
           />
 
           <i
@@ -119,7 +123,7 @@ function Navbar() {
 
     <div className="navbar-right">
       {isLoggedIn ? (
-        <div className="navbar-user">
+        <div className="d-flex align-items-center gap-3">
           <Link to={`/profile/${userId}`}>
             <img
               src={profilePhoto}
@@ -127,17 +131,14 @@ function Navbar() {
               className="profile-photo"
               width={40}
               height={40}
-              style={{
-                borderRadius: "50%",
-                marginRight: "10px",
-                cursor: "pointer",
-              }}
+              style={{ borderRadius: "50%", cursor: "pointer" }}
             />
           </Link>
-          <button className="btn btn-danger" onClick={handleLogout}>
+          <button className="btn btn-danger btn-sm" onClick={handleLogout}>
             Logout
           </button>
         </div>
+
       ) : (
         <>
           <div className="navbar-button">

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import Loder from "../../Components/LoderComponent.jsx/Loder";
 import { getValidToken } from "../../util/auth";
+
 
 const PostForm = () => {
   const [title, setTitle] = useState("");
@@ -14,6 +15,7 @@ const PostForm = () => {
   const [cats, setCats] = useState([]);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const { id: BlogId } = useParams();
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ const PostForm = () => {
 
   const addCategory = () => {
     if (!cat.trim()) return toast.warn("Category cannot be empty.");
+    if (cats.includes(cat.trim())) return toast.warn("Category already exists.");
     setCats([...cats, cat.trim()]);
     setCat("");
   };
@@ -34,7 +37,7 @@ const PostForm = () => {
   useEffect(() => {
     if (!token) {
       toast.error("Session expired. Please login again.");
-      navigate("/login");
+      setTimeout(() => navigate("/login"), 1500);
       return;
     }
 
@@ -91,22 +94,23 @@ const PostForm = () => {
   const savePost = async () => {
     const freshToken = getValidToken(navigate);
     if (!freshToken) return;
-
+    setSaving(true);
+  
     try {
       const post = {
         title,
         content,
         bannerUrl,
-        status: "published", // Only published now
+        status: "published",
         categories: cats,
       };
-
+  
       const url = BlogId
         ? `${process.env.REACT_APP_API_URL}/api/blogs/${BlogId}`
         : `${process.env.REACT_APP_API_URL}/api/blogs`;
       const method = BlogId ? "put" : "post";
-
-      await axios({
+  
+      const res = await axios({
         method,
         url,
         data: post,
@@ -115,14 +119,22 @@ const PostForm = () => {
           "Content-Type": "application/json",
         },
       });
-
+  
       toast.success("Blog post published successfully!");
-      navigate(`/profile/${localStorage.getItem("userId")}`);
+      
+      // ✅ For new blog use res.data.blog._id, for edit use BlogId
+      const blogIdToNavigate = BlogId || res.data.blog._id;
+      navigate(`/blog/${blogIdToNavigate}`);
+  
     } catch (err) {
       console.error("Error:", err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Something went wrong!");
+    } finally {
+      setSaving(false);
     }
   };
+
+
 
   if (loading) return <Loder />;
 
@@ -135,13 +147,13 @@ const PostForm = () => {
             type="submit"
             className="btn btn-dark me-2"
             onClick={savePost}
-            disabled={!title || !content}
+            disabled={saving ||!title || !content}
           >
-            Publish
+           {saving ? "Publishing..." : "Publish"}
           </button>
           <button
             type="button"
-            className="btn btn-outline-primary ms-2"
+            className="btn btn-outline-danger ms-2"
             onClick={() => setPreview(!preview)}
           >
             {preview ? "Edit Mode" : "Preview Mode"}
@@ -258,6 +270,7 @@ const PostForm = () => {
           </div>
         </>
       )}
+      <ToastContainer/>
     </div>
   );
 };

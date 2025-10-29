@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from "react-toastify";
 import Loder from "../../Components/LoderComponent.jsx/Loder";
-
-toast.configure();
+import { Link } from "react-router-dom";
 
 const EditProfilePage = () => {
   const fileInputRef = useRef(null);
@@ -20,12 +18,13 @@ const EditProfilePage = () => {
   const [bioCount, setBioCount] = useState(200);
   const [changingPassword, setChangingPassword] = useState(false);
   const [passwordData, setPasswordData] = useState({ oldPassword: "", newPassword: "", confirmPassword: "" });
+  const token = useMemo(() => localStorage.getItem("Token"), []);
+
 
   // Fetch profile from backend
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("Token");
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/user/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -38,7 +37,7 @@ const EditProfilePage = () => {
       }
     };
     fetchProfile();
-  }, []);
+  }, [token]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -73,7 +72,6 @@ const EditProfilePage = () => {
 
   const handleSave = async () => {
     try {
-      const token = localStorage.getItem("Token");
       let profilePictureUrl = profile.profilePicture;
 
       // Upload new profile picture if selected
@@ -97,7 +95,7 @@ const EditProfilePage = () => {
       setNewProfilePicture(null);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to update profile.");
+      toast.error(err.response?.data?.message || "Failed to update profile.");
     }
   };
 
@@ -106,7 +104,7 @@ const EditProfilePage = () => {
       return toast.error("Passwords do not match");
     }
     try {
-      const token = localStorage.getItem("Token");
+
       await axios.put(
         `${process.env.REACT_APP_API_URL}/api/user/changePassword`,
         { ...passwordData },
@@ -129,10 +127,10 @@ const EditProfilePage = () => {
         {/* Sidebar */}
         <div className="col-md-3 mb-4">
           <ul className="list-group">
-            <li className="list-group-item"><a href="/dashboard" className="text-decoration-none">Dashboard</a></li>
-            <li className="list-group-item"><a href="/blogs" className="text-decoration-none">Blogs</a></li>
-            <li className="list-group-item"><a href="/notifications" className="text-decoration-none">Notifications</a></li>
-            <li className="list-group-item"><a href="/write" className="text-decoration-none">Write</a></li>
+            <li className="list-group-item"><Link to="/dashboard" className="text-decoration-none">Dashboard</Link></li>
+            <li className="list-group-item"><Link to="/blogs" className="text-decoration-none">Blogs</Link></li>
+            <li className="list-group-item"><Link to="/notifications" className="text-decoration-none">Notifications</Link></li>
+            <li className="list-group-item"><Link to="/write" className="text-decoration-none">Write</Link></li>
             <li className="list-group-item"><strong>Settings</strong></li>
             <li className="list-group-item ms-3"><a href="/settings/edit-profile" className="text-decoration-none">Edit Profile</a></li>
             <li className="list-group-item ms-3"><a href="/settings/change-password" className="text-decoration-none" onClick={() => setChangingPassword(true)}>Change Password</a></li>
@@ -185,7 +183,9 @@ const EditProfilePage = () => {
               </div>
 
               <div className="text-end">
-                <button type="button" className="btn btn-primary" onClick={handleSave}>Update Profile</button>
+                <button type="button" className="btn btn-primary" onClick={handleSave} disabled={saving}>
+                  {saving ? "Saving..." : "Update Profile"}
+                </button>
               </div>
             </form>
 
@@ -206,6 +206,7 @@ const EditProfilePage = () => {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 };

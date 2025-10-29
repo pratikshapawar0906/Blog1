@@ -23,7 +23,7 @@ const BlogDetail = () => {
               Authorization: `Bearer ${token}`
             }
           });
-          setBlog(res.data);
+          setBlog(res.data.blog);
         } catch (error) {
           setError("Failed to load blog post. Please try again later.");
         }

@@ -5,57 +5,79 @@ import Loder from "../../Components/LoderComponent.jsx/Loder";
 
 const BlogPage = () => {
   const [blogs, setBlogs] = useState([]);
-  const [page, setPage] = useState(1); // current page number
-  const [totalPages, setTotalPages] = useState(1); // total pages from backend
-  const [, setError] = useState("");
+  const [recentBlogs, setRecentBlogs] = useState([]);
+  const [trendingBlogs, setTrendingBlogs] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [cat, setCat] = useState([]);
-  const{search} =useLocation();
+
+  const { search } = useLocation();
   const params = new URLSearchParams(search);
   const activeCategory = params.get("category");
   const searchQuery = params.get("search");
-
   const navigate = useNavigate();
+ 
+  // ✅ Fetch all blogs
+  const fetchBlogs = useCallback(
+    async (page) => {
+      setLoading(true);
+      try {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/AllPost`, {
+          params: {
+            page,
+            limit: 100,
+            category: activeCategory,
+            search: searchQuery,
+          },
+        });
+        setBlogs(res.data.blogs);
+        setTotalPages(res.data.totalPages);
 
+        const cata = res.data.blogs.flatMap((item) => item.categories || []);
+        const sets = new Set();
+        cata.forEach((category) => {
+          if (category) sets.add(category);
+        });
+        setCat(Array.from(sets));
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [activeCategory, searchQuery]
+  );
 
-  const fetchBlogs = useCallback(async (page) => {
-    setLoading(true);
+  //  Fetch Recent Blogs
+  const fetchRecentBlogs = useCallback(async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/AllPost`, {
-        params: {
-          page,
-          limit: 100,
-          category: activeCategory,
-          search: searchQuery
-        }
-      });
-      setBlogs(res.data.blogs);
-      setTotalPages(res.data.totalPages);
-      setError("");
-      const cata = res.data.blogs.map((item) => item.categories).flat();
-      const sets = new Set();
-      cata.forEach((category) => { if (category) sets.add(category); });
-      setCat(Array.from(sets));
-    } catch (error) {
-      console.error("Error fetching blogs:", error);
-      setError("Failed to load blogs. Please try again later.");
-    } finally {
-      setLoading(false);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/blogs/recent`);
+      setRecentBlogs(res.data.blogs);
+    } catch (err) {
+      console.error("Error fetching recent blogs:", err);
     }
-  }, [search]);
-  
+  }, []);
+
+  //  Fetch Trending Blogs
+  const fetchTrendingBlogs = useCallback(async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/blogs/trending`);
+      setTrendingBlogs(res.data.blogs);
+    } catch (err) {
+      console.error("Error fetching trending blogs:", err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchBlogs(page);
-  }, [page, search, fetchBlogs]);
-
+    fetchRecentBlogs();
+    fetchTrendingBlogs();
+  }, [page, fetchBlogs, fetchRecentBlogs, fetchTrendingBlogs]);
 
   const handleCategoryClick = (category) => {
-    console.log("Category clicked:", category);
-    //  filter or route based on category here
-      navigate(`?category=${encodeURIComponent(category)}`);
+    navigate(`?category=${encodeURIComponent(category)}`);
   };
-
-
 
   const handleNext = () => {
     if (page < totalPages) setPage(page + 1);
@@ -76,7 +98,6 @@ const BlogPage = () => {
             blogs.map((blog) => (
               <div key={blog._id} className="card mb-4 shadow-sm">
                 <div className="card-body d-flex">
-                  {/* Blog Image */}
                   {blog.bannerUrl && (
                     <img
                       src={blog.bannerUrl}
@@ -90,8 +111,7 @@ const BlogPage = () => {
                       }}
                     />
                   )}
-          
-                  {/* Blog Info */}
+
                   <div className="flex-grow-1">
                     <div className="d-flex justify-content-between mb-2 text-muted">
                       <span>{blog.authorName}</span>
@@ -99,12 +119,14 @@ const BlogPage = () => {
                     </div>
                     <h5 className="card-title">{blog.title}</h5>
                     <p className="card-text">
-                      {blog.content.substring(0, 250)}...
+                      {blog.content.length > 250
+                        ? blog.content.substring(0, 250) + "..."
+                        : blog.content}
                     </p>
                     <Link
                       to={`/blog/${blog._id}`}
                       state={{ blog }}
-                      className="btn btn-primary btn-sm"
+                      className="btn btn-dark btn-sm"
                     >
                       Read More
                     </Link>
@@ -116,44 +138,94 @@ const BlogPage = () => {
             <h3 className="text-center font-bold mt-16">No Posts available</h3>
           )}
 
+          {/* Pagination */}
+          <div className="d-flex justify-content-center my-3">
+            <button
+              onClick={handlePrev}
+              disabled={page === 1 || loading}
+              className="btn btn-danger mx-1"
+            >
+              Previous
+            </button>
 
+            {[...Array(totalPages)].map((_, index) => {
+              const pageNumber = index + 1;
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => setPage(pageNumber)}
+                  className={`btn mx-1 ${
+                    pageNumber === page
+                      ? "btn-primary"
+                      : "btn-outline-secondary"
+                  }`}
+                  disabled={loading}
+                >
+                  {pageNumber}
+                </button>
+              );
+            })}
 
-          {/* Pagination Buttons */}
-          <div className="d-flex justify-content-between">
-           <button onClick={handlePrev} disabled={page === 1 || loading} className="btn btn-secondary">
-             Previous
-           </button>
-           <button onClick={handleNext} disabled={page === totalPages || loading} className="btn btn-secondary">
-             Next
-           </button>
-
+            <button
+              onClick={handleNext}
+              disabled={page === totalPages || loading}
+              className="btn btn-danger mx-1"
+            >
+              Next
+            </button>
           </div>
-          <div className="text-center my-2">
-            Page {page} of {totalPages}
-          </div>
-
         </div>
 
         {/* Sidebar */}
         <div className="col-md-4">
-          {/* my categories/trending section here, same as before */}
-           <div className="p-3 m-5 flex flex-wrap justify-center">
-             {cat.length > 0 &&
-               cat.map((category) => (
-                 <button
-                   key={category}
-                   className={`p-3 m-2 h-[90px] w-[150px] border text-lg font-semibold shadow ${
-                     activeCategory === category
-                       ? "bg-blue-500 text-white" // active category style
-                       : "hover:shadow-blue-200"
-                   }`}
-                   onClick={() => handleCategoryClick(category)}
-                 >
-                   {category}
-                 </button>
-               ))}
-           </div>
+          {/* 🔹 Categories */}
+          <div className="p-3">
+            <h5 className="mb-3">Categories</h5>
+            {cat.length > 0 &&
+              cat.map((category) => (
+                <button
+                  key={category}
+                  className={`btn m-1 ${
+                    activeCategory === category
+                      ? "btn-primary"
+                      : "btn-outline-dark"
+                  }`}
+                  onClick={() => handleCategoryClick(category)}
+                >
+                  {category}
+                </button>
+              ))}
+          </div>
 
+          {/* 🔹 Recent Blogs */}
+          <div className="p-3">
+            <h5>Recent Blogs</h5>
+            {recentBlogs.map((blog) => (
+              <div key={blog._id} className="border-bottom py-2">
+                <Link to={`/blog/${blog._id}`} className="text-dark">
+                  {blog.title}
+                </Link>
+                <div className="text-muted small">
+                  {new Date(blog.createdAt).toLocaleDateString()}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 🔹 Trending Blogs */}
+          <div className="p-3">
+            <h5> Trending Blogs</h5>
+            {trendingBlogs.map((blog) => (
+              <div key={blog._id} className="border-bottom py-2">
+                <Link to={`/blog/${blog._id}`} className="text-dark">
+                  {blog.title}
+                </Link>
+                <div className="text-muted small">
+                  👍 {blog.likes} | 👀 {blog.views}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
