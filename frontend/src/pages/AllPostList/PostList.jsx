@@ -49,7 +49,6 @@ const BlogPage = () => {
     [activeCategory, searchQuery]
   );
 
-  //  Fetch Recent Blogs
   const fetchRecentBlogs = useCallback(async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/blogs/recent`);
@@ -58,8 +57,7 @@ const BlogPage = () => {
       console.error("Error fetching recent blogs:", err);
     }
   }, []);
-
-  //  Fetch Trending Blogs
+  
   const fetchTrendingBlogs = useCallback(async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/blogs/trending`);
@@ -68,6 +66,7 @@ const BlogPage = () => {
       console.error("Error fetching trending blogs:", err);
     }
   }, []);
+
 
   useEffect(() => {
     fetchBlogs(page);
@@ -211,6 +210,7 @@ const BlogPage = () => {
               </div>
             ))}
           </div>
+
 
           {/* 🔹 Trending Blogs */}
           <div className="p-3">
