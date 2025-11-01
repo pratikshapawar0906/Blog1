@@ -20,6 +20,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);  // set loading
   const [editing, setEditing] = useState(false);// set editing
 
+
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
     const token = localStorage.getItem("Token");
@@ -36,10 +37,20 @@ const Profile = () => {
       },
     })
       .then((response) => {
+          const userData = response.data.user || response.data;
         setUser({
-          ...response.data,
-          profilePicture: response.data.profilePicture || "default-avatar.png", // Set default if missing
+          name: userData.name || "",
+          email: userData.email || "",
+          bio: userData.bio || "",
+          profilePicture: userData.profilePicture || "default-avatar.png",
+          socialLinks: {
+            instagram: userData.socialLinks?.instagram || "",
+            twitter: userData.socialLinks?.twitter || "",
+            linkedin: userData.socialLinks?.linkedin || "",
+            website: userData.socialLinks?.website || "",
+          },
         });
+
         setLoading(false);
       })
       .catch((error) => {
@@ -108,7 +119,7 @@ const Profile = () => {
         }
       }
 
-      
+      const token = localStorage.getItem("Token");
       
 
       //  Update other profile details
@@ -118,6 +129,10 @@ const Profile = () => {
         bio: user.bio,
         socialLinks: user.socialLinks,
         profilePicture: updatedPhotoUrl,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`, //  Send token
+        },
       });
       
       if (data.success) {
@@ -125,10 +140,8 @@ const Profile = () => {
         localStorage.setItem("ProfilePhoto", updatedPhotoUrl);
         window.dispatchEvent(new Event("storage"));
         setEditing(false);
-        setUser((prevUser) => ({
-          ...prevUser,
-          profilePicture: updatedPhotoUrl,
-        }));
+        setUser(data.user); 
+
       }
 
     } catch (error) {

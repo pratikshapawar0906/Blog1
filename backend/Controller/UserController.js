@@ -82,7 +82,7 @@ export const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
     if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
+    res.json({ success: true, user });
   } catch (err) {
     res.status(500).json({ message: 'Error fetching user profile' });
   }
@@ -120,8 +120,7 @@ export const uploadProfilePhoto = async (req, res) => {
 // PUT /api/updateProfile
 export const updateProfile = async (req, res) => {
   try {
-     const userId = req.user._id;
-    const { name, bio, socialLinks, profilePicture } = req.body;
+    const { userId, name, bio, socialLinks, profilePicture } = req.body;
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
@@ -132,9 +131,12 @@ export const updateProfile = async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.json({ message: 'Profile updated', user: updatedUser });
+
+    res.json({ success: true, message: "Profile updated", user: updatedUser });
+
   } catch (err) {
-    res.status(500).json({ message: 'Profile update failed' });
+    res.status(500).json({ message: "Profile update failed" });
   }
 };
+
 

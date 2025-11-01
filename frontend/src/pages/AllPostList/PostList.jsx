@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Loder from "../../Components/LoderComponent.jsx/Loder";
+import { FaCalendarAlt, FaEye, FaFire, FaThumbsUp } from "react-icons/fa";
 
 const BlogPage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -18,7 +19,7 @@ const BlogPage = () => {
   const searchQuery = params.get("search");
   const navigate = useNavigate();
  
-  // ✅ Fetch all blogs
+  //  Fetch all blogs
   const fetchBlogs = useCallback(
     async (page) => {
       setLoading(true);
@@ -26,7 +27,7 @@ const BlogPage = () => {
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/AllPost`, {
           params: {
             page,
-            limit: 100,
+            limit: 4,
             category: activeCategory,
             search: searchQuery,
           },
@@ -197,35 +198,64 @@ const BlogPage = () => {
           </div>
 
           {/* 🔹 Recent Blogs */}
-          <div className="p-3">
-            <h5>Recent Blogs</h5>
+          <div className="p-3 bg-white rounded shadow-sm">
+            <h5 className="mb-3 d-flex align-items-center gap-1">  <FaCalendarAlt style={{ color: "#6c757d" }} />Recent Blogs</h5>
+            
             {recentBlogs.map((blog) => (
-              <div key={blog._id} className="border-bottom py-2">
-                <Link to={`/blog/${blog._id}`} className="text-dark">
+              <div
+                key={blog._id}
+                className="d-flex justify-content-between align-items-center border-bottom py-2"
+              >
+                <Link
+                  to={`/blog/${blog._id}`}
+                  className="text-dark"
+                  style={{ fontSize: "20px" }}
+                >
                   {blog.title}
                 </Link>
-                <div className="text-muted small">
+          
+                <span className="text-muted small d-flex align-items-center gap-1">
+                  <FaCalendarAlt style={{ color: "#6c757d" }} />
                   {new Date(blog.createdAt).toLocaleDateString()}
-                </div>
+                </span>
               </div>
             ))}
           </div>
+
 
 
           {/* 🔹 Trending Blogs */}
-          <div className="p-3">
-            <h5> Trending Blogs</h5>
+          <div className="p-3 bg-white rounded shadow-sm mt-4">
+           <h5 className="mb-3 d-flex align-items-center gap-2">
+             <FaFire style={{ color: "#ff4500" }} /> Trending Blogs
+           </h5>
+          
             {trendingBlogs.map((blog) => (
-              <div key={blog._id} className="border-bottom py-2">
-                <Link to={`/blog/${blog._id}`} className="text-dark">
+              <div
+                key={blog._id}
+                className="d-flex justify-content-between align-items-center border-bottom py-2"
+              >
+                <Link
+                  to={`/blog/${blog._id}`}
+                  className="text-dark"
+                  style={{ fontSize: "16px" }}
+                >
                   {blog.title}
                 </Link>
-                <div className="text-muted small">
-                  👍 {blog.likes} | 👀 {blog.views}
-                </div>
+          
+                 <span className="text-muted small d-flex align-items-center gap-2">
+                   <span className="d-flex align-items-center gap-1">
+                     <FaThumbsUp style={{ color: "#dfff0cff" }} /> {blog.likes}
+                   </span>
+                   |
+                   <span className="d-flex align-items-center gap-1">
+                     <FaEye  style={{ color: "#2585d9ff" }} /> {blog.views}
+                   </span>
+                 </span>
               </div>
             ))}
           </div>
+
         </div>
       </div>
     </div>

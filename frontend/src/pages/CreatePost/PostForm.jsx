@@ -7,6 +7,8 @@ import Loder from "../../Components/LoderComponent.jsx/Loder";
 import { getValidToken } from "../../util/auth";
 
 
+
+
 const PostForm = () => {
   const [title, setTitle] = useState("");
   const [bannerUrl, setBannerUrl] = useState("");
@@ -122,7 +124,7 @@ const PostForm = () => {
   
       toast.success("Blog post published successfully!");
       
-      // ✅ For new blog use res.data.blog._id, for edit use BlogId
+      //  For new blog use res.data.blog._id, for edit use BlogId
       const blogIdToNavigate = BlogId || res.data.blog._id;
       navigate(`/blog/${blogIdToNavigate}`);
   

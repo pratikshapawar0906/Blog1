@@ -109,7 +109,7 @@ const LikeShareComment = ({ blogId }) => {
             onKeyDown={(e) => {
               if (e.ctrlKey && e.key === "Enter") handleAddComment();
             }}
-            placeholder="Write a comment... (Ctrl + Enter to submit)"
+            placeholder="Write a comment..."
           ></textarea>
           <button className="btn btn-primary mt-2" onClick={handleAddComment}>
             Add Comment

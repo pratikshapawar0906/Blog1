@@ -63,9 +63,9 @@ export const getBlogById = async (req, res) => {
 //  Recent Blogs
 export const getRecentBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ status: "published" })
+    const blogs = await Blog.findOne({ status: "published" })
       .sort({ createdAt: -1 })
-      .limit(5);
+      
     res.json({ blogs });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -75,9 +75,9 @@ export const getRecentBlogs = async (req, res) => {
 //  Trending Blogs (most liked or viewed)
 export const getTrendingBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ status: "published" })
+    const blogs = await Blog.findOne({ status: "published" })
       .sort({ likes: -1, views: -1 })
-      .limit(5);
+     
     res.json({ blogs });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -100,7 +100,7 @@ export const getviewofblogs=async (req, res) => {
 
 export const AllPost = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 100;
+  const limit = parseInt(req.query.limit) || 3;
   const category = req.query.category;
   const search = req.query.search;
 

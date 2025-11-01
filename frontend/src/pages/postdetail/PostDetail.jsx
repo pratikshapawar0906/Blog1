@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import './pdetail.css';
 import LikeShareComment from "../../Components/likeshareCommentComponent/likeshareComment";
+import { FaClock, FaUserEdit } from "react-icons/fa";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -41,9 +42,16 @@ const BlogDetail = () => {
 
       <div className="card shadow-lg rounded p-4">
         <h1 className="blog-title mb-3">{blog.title}</h1>
-        <p className="blog-meta text-muted mb-4">
-          ✍️ {blog.author?.email} | 🕒 {new Date(blog.createdAt).toLocaleDateString()}
+        <p className="blog-meta text-muted mb-4 d-flex align-items-center gap-3 justify-content-between">
+          <span className="d-flex align-items-center gap-1">
+            <FaUserEdit style={{ color: "#0d6efd", fontSize:"28px" }} /> {blog.author?.email}
+          </span>
+        
+          <span className="d-flex align-items-center gap-1">
+            <FaClock style={{ color: "#6c757d", fontSize:"28px", }} /> {new Date(blog.createdAt).toLocaleDateString()}
+          </span>
         </p>
+
 
         <img
           src={blog.bannerUrl}
