@@ -82,15 +82,15 @@ function Navbar() {
       
       <ul className="navbar-menu">
         <li className="navbar-item">
-          <Link className="text-decoration-none text-muted" to="/">Home</Link>
+          <Link className="" to="/" style={{textDecoration:"none", color:"#48a0d6ff"}}>Home</Link>
         </li>
        { isLoggedIn && (
           <li className="navbar-item">
-            <Link className="text-decoration-none text-muted" to={`/myblog/${userId}`}>My Blog</Link>
+            <Link className=""  style={{textDecoration:"none", color:"#48a0d6ff"}} to={`/myblog/${userId}`}>My Blog</Link>
           </li>
         )}
         <li className="navbar-item">
-          <Link className="text-decoration-none text-muted" to="/write">Write</Link>
+          <Link className="" style={{textDecoration:"none", color:"#48a0d6ff"}} to="/write">Create</Link>
         </li>
 
       </ul>

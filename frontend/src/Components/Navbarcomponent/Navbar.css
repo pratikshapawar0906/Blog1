@@ -28,14 +28,13 @@
 .navbar-item {
   cursor: pointer;
   transition: all 0.3s ease-in-out;
-  color: #000000;
   font-size: 20px;
   font-weight: bold;
 }
 
 .navbar-item:hover {
-  color: #000000; /* Replace with your primary color */
-  transform: scale(1.05);
+  
+  transform: scale(1.25);
 }
 
 .navbar-right {

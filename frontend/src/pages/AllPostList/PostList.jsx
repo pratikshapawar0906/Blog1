@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Loder from "../../Components/LoderComponent.jsx/Loder";
-import { FaCalendarAlt, FaEye, FaFire, FaThumbsUp } from "react-icons/fa";
+import { FaCalendarAlt, FaEye, FaFire, FaThumbsUp, FaTrophy } from "react-icons/fa";
 
 const BlogPage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -53,20 +53,44 @@ const BlogPage = () => {
   const fetchRecentBlogs = useCallback(async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/blogs/recent`);
-      setRecentBlogs(res.data.blogs);
+      
+      let data = res.data.blogs;
+  
+      // Convert single object → array
+      if (data && !Array.isArray(data)) {
+        data = [data];
+      }
+  
+      // Only show 1 recent blog
+      setRecentBlogs(data.slice(0, 1));
     } catch (err) {
       console.error("Error fetching recent blogs:", err);
+      setRecentBlogs([]);
     }
   }, []);
+
+
   
   const fetchTrendingBlogs = useCallback(async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/blogs/trending`);
-      setTrendingBlogs(res.data.blogs);
+      
+      let data = res.data.blogs || res.data.trendingBlogs;
+  
+      // Convert single object → array
+      if (data && !Array.isArray(data)) {
+        data = [data];
+      }
+  
+      // Only show first 4 trending blogs
+      setTrendingBlogs(data.slice(0, 4));
     } catch (err) {
       console.error("Error fetching trending blogs:", err);
+      setTrendingBlogs([]);
     }
   }, []);
+
+  
 
 
   useEffect(() => {
@@ -97,7 +121,7 @@ const BlogPage = () => {
           ) : blogs.length > 0 ? (
             blogs.map((blog) => (
               <div key={blog._id} className="card mb-4 shadow-sm">
-                <div className="card-body d-flex">
+                <div className="card-body d-flex" style={{padding:"24px"}}>
                   {blog.bannerUrl && (
                     <img
                       src={blog.bannerUrl}
@@ -117,7 +141,7 @@ const BlogPage = () => {
                       <span>{blog.authorName}</span>
                       <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
                     </div>
-                    <h5 className="card-title">{blog.title}</h5>
+                    <h5 className="card-title" style={{color:"#341cd0ff", fontSize:"24px"}}>{blog.title}</h5>
                     <p className="card-text">
                       {blog.content.length > 250
                         ? blog.content.substring(0, 250) + "..."
@@ -126,7 +150,7 @@ const BlogPage = () => {
                     <Link
                       to={`/blog/${blog._id}`}
                       state={{ blog }}
-                      className="btn btn-dark btn-sm"
+                      className="btn btn-warning btn-sm"
                     >
                       Read More
                     </Link>
@@ -209,7 +233,7 @@ const BlogPage = () => {
                 <Link
                   to={`/blog/${blog._id}`}
                   className="text-dark"
-                  style={{ fontSize: "20px" }}
+                  style={{ fontSize: "20px", textDecoration:"none" }}
                 >
                   {blog.title}
                 </Link>
@@ -230,22 +254,31 @@ const BlogPage = () => {
              <FaFire style={{ color: "#ff4500" }} /> Trending Blogs
            </h5>
           
-            {trendingBlogs.map((blog) => (
+            {trendingBlogs.map((blog,index) => (
               <div
                 key={blog._id}
                 className="d-flex justify-content-between align-items-center border-bottom py-2"
+                style={{
+                  background: index === 0 ? "#fff6e6" : "transparent", // Highlight bg for top post
+                }}
+
               >
                 <Link
                   to={`/blog/${blog._id}`}
-                  className="text-dark"
-                  style={{ fontSize: "16px" }}
+                  className="text-dark d-flex align-items-center gap-2"
+                  style={{
+                    fontSize: index === 0 ? "18px" : "16px",
+                    fontWeight: index === 0 ? "600" : "400",
+                    textDecoration: "none",
+                  }}
                 >
+                   {index === 0 && <FaTrophy style={{ color: "#ff9800" }} />}
                   {blog.title}
                 </Link>
           
                  <span className="text-muted small d-flex align-items-center gap-2">
                    <span className="d-flex align-items-center gap-1">
-                     <FaThumbsUp style={{ color: "#dfff0cff" }} /> {blog.likes}
+                     <FaThumbsUp style={{ color: "#28a745" }} /> {blog.likes}
                    </span>
                    |
                    <span className="d-flex align-items-center gap-1">

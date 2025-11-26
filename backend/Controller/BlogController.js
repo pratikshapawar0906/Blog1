@@ -74,14 +74,16 @@ export const getRecentBlogs = async (req, res) => {
 
 //  Trending Blogs (most liked or viewed)
 export const getTrendingBlogs = async (req, res) => {
-  try {
-    const blogs = await Blog.findOne({ status: "published" })
-      .sort({ likes: -1, views: -1 })
-     
-    res.json({ blogs });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    try{
+      const blogs =await Blog.find({status: "published" })
+        .sort({Likes:-1, views:-1})
+        .limit(4)
+
+      res.json({blogs})
+    }
+    catch(err){
+      res.status(200).json({error : err.message})
+    }
 };
 
 // Increment views

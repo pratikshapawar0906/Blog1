@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import "./pro.css";
-import { FaEdit, FaHome, FaPen } from "react-icons/fa";
+import { FaCamera, FaEdit, FaGlobe, FaHome, FaInstagram, FaLinkedin, FaPen, FaTwitter } from "react-icons/fa";
 import { handleSuccess } from "../../util";
 import Loder from "../../Components/LoderComponent.jsx/Loder";
 
@@ -19,7 +19,7 @@ const Profile = () => {
   const [newProfilePicture, setNewProfilePicture] = useState(null);
   const [loading, setLoading] = useState(true);  // set loading
   const [editing, setEditing] = useState(false);// set editing
-
+ 
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -33,7 +33,8 @@ const Profile = () => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/api/user/${storedUserId}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, 
+        "Content-Type": "application/json",
       },
     })
       .then((response) => {
@@ -161,65 +162,76 @@ const Profile = () => {
         </Link>
 
         <Link to="/write" className="pgp-sidebar-btn">
-         <FaPen /> Write
+         <FaPen /> Create
         </Link>
       </div>
 
       {/* Main Profile Section */}
       <div className="pgp-profile-content">
-        <div className="pgp-profile-header">
-          {/* Clicking the image triggers file input */}
-          <img
-            src={user.profilePicture}
-            alt="Profile"
-            className="pgp-profile-image"
-            onClick={() => fileInputRef.current.click()} // Open file browser
-            style={{ cursor: "pointer" }} // Indicate it's clickable
-          />
+        <div className="pgp-profile-header"> {/* Clicking the image triggers file input */} 
+          <div className="pgp-image-wrapper" onClick={() => fileInputRef.current.click()}>
+            <img 
+              src={user.profilePicture} 
+              alt="Profile" 
+              className="pgp-profile-image"
+            />
+            <div className="pgp-image-edit-icon">
+              <FaCamera size={14} />
+            </div>
+          </div>
 
           {/* Hidden file input */}
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef} // Connect input to ref
-            onChange={handleFileChange}
-            style={{ display: "none" }} // Hide input
-          />
+          <input type="file" 
+            accept="image/*" 
+            ref={fileInputRef} // Connect input to ref 
+            onChange={handleFileChange} 
+            style={{ display: "none" }} // Hide input 
+          /> 
+            <div className="pgp-profile-details">
+              {editing ? (
+                <>
+                  <input
+                    type="text"
+                    name="name"
+                    value={user.name}
+                    onChange={handleInputChange}
+                    placeholder="Name"
+                  />
+            
+                  <textarea
+                    name="bio"
+                    value={user.bio}
+                    onChange={handleInputChange}
+                    placeholder="User's bio"
+                  />
+                  <button onClick={handleSubmit} className="pgp-submit-btn">Submit</button>
+                </>
+              ) : (
+                <>
+                  <h2>{user.name} <FaEdit onClick={handleEditClick} style={{ cursor: "pointer" }} /></h2>
+                  <p className="pgp-bio">{user.bio || "No bio added yet"}</p>
+                </>
+              )}
+            </div>
 
-          <div className="pgp-profile-details">
-            {editing ? (
-              <>
-                <input
-                  type="text"
-                  name="name"
-                  value={user.name}
-                  onChange={handleInputChange}
-                  placeholder="Name"
-                />
-                <textarea
-                  name="bio"
-                  value={user.bio}
-                  onChange={handleInputChange}
-                  placeholder="User's bio"
-                />
-                <button onClick={handleSubmit} className="pgp-submit-btn">Submit</button>
-              </>
-            ) : (
-              <>
-                <h2>{user.name} <FaEdit onClick={handleEditClick} style={{ cursor: "pointer" }} /></h2>
-                <p>{user.email}</p>
-                <p>{user.bio}</p>
-              </>
-            )}
           </div>
-        </div>
+
 
         {/* Social Links */}
         <div className="pgp-social-links">
           <h3>Social Links</h3>
-          {["instagram", "twitter", "linkedin", "website"].map((platform) => (
-            <div key={platform}>
-              <label>{platform.charAt(0).toUpperCase() + platform.slice(1)}:</label>
+        
+          {[
+            { platform: "instagram", icon: <FaInstagram /> },
+            { platform: "twitter", icon: <FaTwitter /> },
+            { platform: "linkedin", icon: <FaLinkedin /> },
+            { platform: "website", icon: <FaGlobe /> }
+          ].map(({ platform, icon }) => (
+            <div className="pgp-social-field" key={platform}>
+              <label>
+                <span className="pgp-social-icon">{icon}</span>
+                {platform.charAt(0).toUpperCase() + platform.slice(1)}
+              </label>
               <input
                 type="url"
                 name={platform}
@@ -235,10 +247,10 @@ const Profile = () => {
                 }
                 placeholder="https://"
               />
-
             </div>
           ))}
         </div>
+
 
         <button onClick={handleSubmit} className="pgp-update-btn">
           Update

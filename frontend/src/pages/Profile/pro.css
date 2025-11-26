@@ -46,6 +46,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+   text-decoration: none;
 }
 
 .pgp-sidebar-btn:hover {
@@ -61,52 +62,121 @@ body {
   align-items: center;
 }
 
+
+/* Profile Header */ 
+.pgp-profile-header { 
+   display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 30px 35px;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.06);
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 35px;
+  position: relative;
+} 
+
+.pgp-profile-header::after {
+  content: "";
+  position: absolute;
+  bottom: -17px;
+  left: 20px;
+  right: 20px;
+  height: 1.5px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 10px;
+}
+
+
+/* Image Section */
+.pgp-image-wrapper {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  cursor: pointer;
+}
+/* Profile Image */
+.pgp-profile-image { 
+  width: 100%; 
+  height: 100%; 
+  border-radius: 50%; 
+  object-fit: cover; 
+  border: 3px solid var(--pgp-primary); 
+  
+}
 /* Profile Header */
-.pgp-profile-header {
+/* .pgp-profile-header {
   display: flex;
   align-items: center;
-  gap: 20px;
-  background: white;
-  padding: 20px;
-  border-radius: var(--pgp-border-radius);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+   gap: 25px;
+  padding: 25px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0px 6px 14px rgba(0,0,0,0.08);
   width: 100%;
-  max-width: 600px;
-}
+  max-width: 750px;
+  margin-bottom: 20px;
+} */
 
-.pgp-profile-image {
-  width: 100px;
-  height: 100px;
+
+/* Camera/Edit Icon Overlay */
+ .pgp-image-edit-icon {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: var(--pgp-primary);
+  color: white;
   border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--pgp-primary);
-}
-
-..pgp-profile-details {
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  margin: 20px auto;
-  text-align: center;
-}
-
-.pgp-profile-details h2 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  font-size: 14px;
+  transition: 0.3s ease;
+  opacity: 0;
+} 
+
+
+/* Show icon on hover */
+.pgp-image-wrapper:hover .pgp-image-edit-icon {
+  opacity: 1;
 }
 
-.pgp-profile-details p {
+.pgp-profile-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* prevents center alignment */
+  text-align: left;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.pgp-profile-details h2 {
+ font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Bio Style */
+.pgp-bio {
+  font-size: 15px;
+  color: #555;
+  margin-top: 6px;
+}
+
+/* .pgp-profile-details p {
   font-size: 16px;
   color: #555;
   margin-bottom: 8px;
-}
+} */
 
 .pgp-profile-details input,
 .pgp-profile-details textarea {
@@ -152,10 +222,10 @@ body {
 
 /* Social Links */
 .pgp-social-links {
-  margin-top: 20px;
-  background: white;
-  padding: 20px;
-  border-radius: var(--pgp-border-radius);
+  margin-top: 40px;
+  background: #ffffff;
+  padding: 25px 30px;
+  border-radius: 14px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 600px;
@@ -167,8 +237,10 @@ body {
 
 .pgp-social-links label {
   font-weight: 600;
-  margin-top: 10px;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
 }
 
 .pgp-social-links input {
@@ -186,6 +258,10 @@ body {
   box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
 }
 
+
+
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .pgp-profile-wrapper {
@@ -193,36 +269,63 @@ body {
   }
 
   .pgp-sidebar {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    justify-content: space-around;
+  width: 220px;
+  background: #ffffff; /* Lighter and cleaner */
+  border-right: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding-top: 20px;
   }
 
   .pgp-sidebar-btn {
-    width: auto;
-    padding: 10px;
+  padding: 14px 20px;
+  font-size: 17px;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  border-left: 4px solid transparent;
+  transition: 0.3s ease;
   }
 
+  .pgp-sidebar-btn:hover {
+  background: rgba(0, 123, 255, 0.08);
+  border-left-color: #007bff;
+  color: #007bff;
+}
+
+/* If you have active route logic, apply this */
+.pgp-sidebar-btn.active {
+  background: rgba(0, 123, 255, 0.12);
+  border-left-color: #007bff;
+  color: #007bff;
+  font-weight: 600;
+}
   .pgp-profile-header,
   .pgp-social-links {
     width: 90%;
   }
 }
+
 /* Update Button */
 .pgp-update-btn {
-  background: #5d5b59;
-  color: white;
+  background: #007bff;
+  color: #fff;
   border: none;
-  padding: 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  width: 300px;
-  margin-top: 15px;
-  transition: background 0.3s;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 600;
+  width: 100%;
+  max-width: 600px; /* Match social card width */
+  margin-top: 25px;
+  transition: 0.3s ease;
+  box-shadow: 0px 3px 6px rgba(0,0,0,0.12);
 }
 
 .pgp-update-btn:hover {
-  background: #cbc9c6;
+  background: #0056b3;
+  box-shadow: 0px 5px 12px rgba(0,0,0,0.18);
 }
