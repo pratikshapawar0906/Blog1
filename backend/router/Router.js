@@ -34,12 +34,12 @@ router.put("/blogs/:id", authMiddleware, updateBlog);
 
 
 router.post("/blogbanner",cloudinaryUpload.single("bannerImage"),blogPhoto);
-router.get("/user/:userId", authMiddleware, getBlogByUserId)
+router.get("/user/blogs/:userId", authMiddleware, getBlogByUserId)
 router.delete("/blogs/:blogId", authMiddleware,deleteBlogbyId)
 // router.post('/uploadUrlImage'uplodUrl)
 
-router.get('/user/:id',authMiddleware, getUserProfile);
-router.post('/user/uploadProfilePhoto', cloudinaryUpload.single('profilePhoto'), uploadProfilePhoto);
+router.get("/user/profile/:id",authMiddleware, getUserProfile);
+router.post('/user/uploadProfilePhoto', authMiddleware,cloudinaryUpload.single('profilePhoto'), uploadProfilePhoto);
 router.put('/updateProfile',authMiddleware, updateProfile);
 
 

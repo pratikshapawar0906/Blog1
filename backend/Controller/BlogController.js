@@ -76,7 +76,7 @@ export const getRecentBlogs = async (req, res) => {
 export const getTrendingBlogs = async (req, res) => {
     try{
       const blogs =await Blog.find({status: "published" })
-        .sort({Likes:-1, views:-1})
+        .sort({likes:-1, views:-1})
         .limit(4)
 
       res.json({blogs})

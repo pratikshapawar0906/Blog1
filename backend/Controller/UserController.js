@@ -80,12 +80,17 @@ export const registerUser = async (req, res) => {
 // GET /api/user/:id
 export const getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    const userId = req.params.id;
+    const user = await User.findById(userId).select("-password"); // exclude password
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
     res.json({ success: true, user });
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching user profile' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
+  
 };
 
 // Cloudinary config (if using)
@@ -98,22 +103,24 @@ cloudinary.v2.config({
 //POST /api/user/uploadProfilePhoto
 export const uploadProfilePhoto = async (req, res) => {
   try {
-    const file = req.file.path;
+    if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
-    // Upload to cloudinary
-    const result = await cloudinary.v2.uploader.upload(file, {
-      folder: 'profile_photos',
+    const userId = req.body.userId;
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "profile_photos",
     });
 
-    // Update user's profile picture in DB
-    await User.findByIdAndUpdate(req.body.userId, {
-      profilePicture: result.secure_url,
-    });
+    user.profilePicture = result.secure_url;
+    await user.save();
 
-    res.json({ photoUrl: result.secure_url });
-  } catch (err) {
-    console.error("Upload error:", err);
-    res.status(500).json({ message: 'Profile photo upload failed' });
+    res.json({ success: true, photoUrl: result.secure_url });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to upload photo" });
   }
 };
 
@@ -122,20 +129,20 @@ export const updateProfile = async (req, res) => {
   try {
     const { userId, name, bio, socialLinks, profilePicture } = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { name, bio, socialLinks, profilePicture },
-      { new: true }
-    );
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    user.name = name || user.name;
+    user.bio = bio || user.bio;
+    user.socialLinks = socialLinks || user.socialLinks;
+    user.profilePicture = profilePicture || user.profilePicture;
 
-    res.json({ success: true, message: "Profile updated", user: updatedUser });
+    await user.save();
 
-  } catch (err) {
-    res.status(500).json({ message: "Profile update failed" });
+    res.json({ success: true, message: "Profile updated successfully", user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
